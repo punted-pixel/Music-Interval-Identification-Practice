@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">Music Interval Trainer</string>
+    <string name="practice_title">Interval practice</string>
+    <string name="practice_score">%1$d of %2$d correct</string>
+    <string name="note_direction">Note direction</string>
+    <string name="direction_up">Up</string>
+    <string name="direction_down">Down</string>
+    <string name="direction_mixed">Mixed</string>
+    <string name="listen_title">Listen to both notes</string>
+    <string name="listen_prompt">How far apart are they?</string>
+    <string name="play_notes">Play notes</string>
+    <string name="playing_notes">Playing…</string>
+    <string name="replay_notes">Replay notes</string>
+    <string name="playback_error">Audio couldn’t play. Try playing the notes again.</string>
+    <string name="choose_interval">Choose the interval</string>
+    <string name="answer_correct">Correct! %1$s</string>
+    <string name="answer_incorrect">The interval was %1$s</string>
+    <string name="ascending_interval">Ascending · %1$s</string>
+    <string name="descending_interval">Descending · %1$s</string>
+    <plurals name="semitones">
+        <item quantity="one">%d semitone</item>
+        <item quantity="other">%d semitones</item>
+    </plurals>
+    <string name="next_interval">Next interval</string>
+    <string name="minor_second">Minor second</string>
+    <string name="major_second">Major second</string>
+    <string name="minor_third">Minor third</string>
+    <string name="major_third">Major third</string>
+    <string name="perfect_fourth">Perfect fourth</string>
+    <string name="perfect_fifth">Perfect fifth</string>
+    <string name="major_sixth">Major sixth</string>
+    <string name="octave">Octave</string>
+</resources>
