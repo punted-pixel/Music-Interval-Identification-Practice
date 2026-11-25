@@ -64,6 +64,7 @@ import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 private enum class Interval(val semitones: Int, @get:StringRes val label: Int) {
+    UNISON(0, R.string.unison),
     MINOR_SECOND(1, R.string.minor_second),
     MAJOR_SECOND(2, R.string.major_second),
     MINOR_THIRD(3, R.string.minor_third),
@@ -72,6 +73,8 @@ private enum class Interval(val semitones: Int, @get:StringRes val label: Int) {
     TRITONE(6, R.string.tritone),
     PERFECT_FIFTH(7, R.string.perfect_fifth),
     MAJOR_SIXTH(9, R.string.major_sixth),
+    MINOR_SEVENTH(10, R.string.minor_seventh),
+    MAJOR_SEVENTH(11, R.string.major_seventh),
     OCTAVE(12, R.string.octave)
 }
 
@@ -100,7 +103,11 @@ private data class Question(val firstNote: Int, val interval: Interval, val asce
                     Direction.MIXED -> Random.nextBoolean()
                 }
                 question = Question(Random.nextInt(60, 73), Interval.entries.random(), ascending)
-            } while (question == previous)
+            } while (
+                previous != null &&
+                question.firstNote == previous.firstNote &&
+                question.secondNote == previous.secondNote
+            )
             return question
         }
     }
@@ -416,7 +423,11 @@ private fun RoundResult(question: Question, wasCorrect: Boolean) {
             )
             Text(
                 text = stringResource(
-                    if (question.ascending) R.string.ascending_interval else R.string.descending_interval,
+                    when {
+                        question.interval == Interval.UNISON -> R.string.unison_interval
+                        question.ascending -> R.string.ascending_interval
+                        else -> R.string.descending_interval
+                    },
                     distance
                 ),
                 style = MaterialTheme.typography.bodyMedium

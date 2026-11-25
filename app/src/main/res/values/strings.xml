@@ -15,6 +15,7 @@
     <string name="choose_interval">Choose the interval</string>
     <string name="answer_correct">Correct! %1$s</string>
     <string name="answer_incorrect">The interval was %1$s</string>
+    <string name="unison_interval">Same pitch · %1$s</string>
     <string name="ascending_interval">Ascending · %1$s</string>
     <string name="descending_interval">Descending · %1$s</string>
     <plurals name="semitones">
@@ -22,6 +23,7 @@
         <item quantity="other">%d semitones</item>
     </plurals>
     <string name="next_interval">Next interval</string>
+    <string name="unison">Unison</string>
     <string name="minor_second">Minor second</string>
     <string name="major_second">Major second</string>
     <string name="minor_third">Minor third</string>
@@ -30,5 +32,7 @@
     <string name="tritone">Tritone</string>
     <string name="perfect_fifth">Perfect fifth</string>
     <string name="major_sixth">Major sixth</string>
+    <string name="minor_seventh">Minor seventh</string>
+    <string name="major_seventh">Major seventh</string>
     <string name="octave">Octave</string>
 </resources>
