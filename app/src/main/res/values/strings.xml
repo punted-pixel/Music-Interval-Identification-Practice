@@ -27,6 +27,7 @@
     <string name="minor_third">Minor third</string>
     <string name="major_third">Major third</string>
     <string name="perfect_fourth">Perfect fourth</string>
+    <string name="tritone">Tritone</string>
     <string name="perfect_fifth">Perfect fifth</string>
     <string name="major_sixth">Major sixth</string>
     <string name="octave">Octave</string>
