@@ -72,6 +72,7 @@ private enum class Interval(val semitones: Int, @get:StringRes val label: Int) {
     PERFECT_FOURTH(5, R.string.perfect_fourth),
     TRITONE(6, R.string.tritone),
     PERFECT_FIFTH(7, R.string.perfect_fifth),
+    MINOR_SIXTH(8, R.string.minor_sixth),
     MAJOR_SIXTH(9, R.string.major_sixth),
     MINOR_SEVENTH(10, R.string.minor_seventh),
     MAJOR_SEVENTH(11, R.string.major_seventh),
