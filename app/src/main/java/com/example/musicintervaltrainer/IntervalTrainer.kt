@@ -33,7 +33,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -63,7 +62,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
-private enum class Interval(val semitones: Int, @get:StringRes val label: Int) {
+internal enum class Interval(val semitones: Int, @get:StringRes val label: Int) {
     UNISON(0, R.string.unison),
     MINOR_SECOND(1, R.string.minor_second),
     MAJOR_SECOND(2, R.string.major_second),
@@ -79,13 +78,13 @@ private enum class Interval(val semitones: Int, @get:StringRes val label: Int) {
     OCTAVE(12, R.string.octave)
 }
 
-private enum class Direction(@get:StringRes val label: Int) {
+internal enum class Direction(@get:StringRes val label: Int) {
     UP(R.string.direction_up),
     DOWN(R.string.direction_down),
     MIXED(R.string.direction_mixed)
 }
 
-private data class Question(val firstNote: Int, val interval: Interval, val ascending: Boolean) {
+internal data class Question(val firstNote: Int, val interval: Interval, val ascending: Boolean) {
     val secondNote: Int
         get() = if (ascending) firstNote + interval.semitones else firstNote - interval.semitones
 
@@ -95,15 +94,19 @@ private data class Question(val firstNote: Int, val interval: Interval, val asce
             restore = { Question(it[0] as Int, Interval.valueOf(it[1] as String), it[2] as Boolean) }
         )
 
-        fun random(direction: Direction, previous: Question? = null): Question {
+        fun random(
+            direction: Direction,
+            previous: Question? = null,
+            random: Random = Random.Default
+        ): Question {
             var question: Question
             do {
                 val ascending = when (direction) {
                     Direction.UP -> true
                     Direction.DOWN -> false
-                    Direction.MIXED -> Random.nextBoolean()
+                    Direction.MIXED -> random.nextBoolean()
                 }
-                question = Question(Random.nextInt(60, 73), Interval.entries.random(), ascending)
+                question = Question(random.nextInt(60, 73), Interval.entries.random(random), ascending)
             } while (
                 previous != null &&
                 question.firstNote == previous.firstNote &&
@@ -111,6 +114,20 @@ private data class Question(val firstNote: Int, val interval: Interval, val asce
             )
             return question
         }
+    }
+}
+
+internal data class PracticeScore(val answered: Int = 0, val correct: Int = 0) {
+    fun recordAnswer(question: Question, selected: Interval): PracticeScore = PracticeScore(
+        answered = answered + 1,
+        correct = if (question.interval == selected) correct + 1 else correct
+    )
+
+    companion object {
+        val Saver = listSaver(
+            save = { score: PracticeScore -> listOf(score.answered, score.correct) },
+            restore = { PracticeScore(answered = it[0], correct = it[1]) }
+        )
     }
 }
 
@@ -122,8 +139,9 @@ internal fun IntervalTrainer(modifier: Modifier = Modifier) {
     }
     var answer by rememberSaveable { mutableStateOf<Interval?>(null) }
     var heardNotes by rememberSaveable { mutableStateOf(false) }
-    var answeredCount by rememberSaveable { mutableIntStateOf(0) }
-    var correctCount by rememberSaveable { mutableIntStateOf(0) }
+    var score by rememberSaveable(stateSaver = PracticeScore.Saver) {
+        mutableStateOf(PracticeScore())
+    }
     var playing by remember { mutableStateOf(false) }
     var playbackError by remember { mutableStateOf(false) }
 
@@ -168,7 +186,7 @@ internal fun IntervalTrainer(modifier: Modifier = Modifier) {
                     modifier = Modifier.semantics { heading() }
                 )
                 Text(
-                    text = stringResource(R.string.practice_score, correctCount, answeredCount),
+                    text = stringResource(R.string.practice_score, score.correct, score.answered),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -213,8 +231,7 @@ internal fun IntervalTrainer(modifier: Modifier = Modifier) {
                 onAnswer = { selected ->
                     if (answer == null && heardNotes && !playing) {
                         answer = selected
-                        answeredCount++
-                        if (selected == question.interval) correctCount++
+                        score = score.recordAnswer(question, selected)
                     }
                 }
             )

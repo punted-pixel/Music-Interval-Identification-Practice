@@ -22,9 +22,7 @@ private const val NOTE_SAMPLES = SAMPLE_RATE * NOTE_MS / 1_000
 private const val GAP_SAMPLES = SAMPLE_RATE * GAP_MS / 1_000
 
 internal suspend fun playInterval(firstNote: Int, secondNote: Int) = withContext(Dispatchers.IO) {
-    val samples = ShortArray(2 * NOTE_SAMPLES + GAP_SAMPLES)
-    synthesizeNote(samples, start = 0, midiNote = firstNote)
-    synthesizeNote(samples, start = NOTE_SAMPLES + GAP_SAMPLES, midiNote = secondNote)
+    val samples = synthesizeInterval(firstNote, secondNote)
     ensureActive()
 
     val track = AudioTrack.Builder()
@@ -62,6 +60,13 @@ internal suspend fun playInterval(firstNote: Int, secondNote: Int) = withContext
     } finally {
         track.release()
     }
+}
+
+internal fun synthesizeInterval(firstNote: Int, secondNote: Int): ShortArray {
+    val samples = ShortArray(2 * NOTE_SAMPLES + GAP_SAMPLES)
+    synthesizeNote(samples, start = 0, midiNote = firstNote)
+    synthesizeNote(samples, start = NOTE_SAMPLES + GAP_SAMPLES, midiNote = secondNote)
+    return samples
 }
 
 private fun synthesizeNote(samples: ShortArray, start: Int, midiNote: Int) {
