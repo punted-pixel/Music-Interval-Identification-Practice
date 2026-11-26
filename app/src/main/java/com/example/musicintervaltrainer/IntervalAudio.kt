@@ -7,11 +7,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.math.PI
 import kotlin.math.exp
 import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 private const val SAMPLE_RATE = 24_000
 private const val NOTE_MS = 520
@@ -49,8 +51,14 @@ internal suspend fun playInterval(firstNote: Int, secondNote: Int) = withContext
         }
         ensureActive()
         track.play()
-        // Leave a little time for the output buffer to drain after the last note.
-        delay((2 * NOTE_MS + GAP_MS + 120).milliseconds)
+        checkNotNull(withTimeoutOrNull(5.seconds) {
+            while (track.playbackHeadPosition < samples.size) {
+                delay(15.milliseconds)
+            }
+        }) { "Timed out waiting for both notes to play" }
+
+        // Give the output buffer time to drain before releasing the track.
+        delay(120.milliseconds)
     } finally {
         track.release()
     }
